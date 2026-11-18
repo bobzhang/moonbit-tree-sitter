@@ -40,43 +40,45 @@ pub extern "c" fn TreeCursor::goto_last_child(self : TreeCursor) -> Bool = "moon
 ///|
 extern "c" fn TreeCursor::_goto_descendant(
   self : TreeCursor,
-  goal_descendant_index : UInt
+  goal_descendant_index : UInt32,
 ) -> Unit = "moonbit_ts_tree_cursor_goto_descendant"
 
 ///|
 pub fn TreeCursor::goto_descendant(
   self : TreeCursor,
-  goal_descendant_index : Int
+  goal_descendant_index : Int32,
 ) -> Unit {
   self._goto_descendant(int_to_uint(goal_descendant_index))
 }
 
 ///|
-extern "c" fn TreeCursor::_current_descendant_index(self : TreeCursor) -> UInt = "moonbit_ts_tree_cursor_current_descendant_index"
+extern "c" fn TreeCursor::_current_descendant_index(
+  self : TreeCursor,
+) -> UInt32 = "moonbit_ts_tree_cursor_current_descendant_index"
 
 ///|
-pub fn TreeCursor::current_descendant_index(self : TreeCursor) -> Int {
+pub fn TreeCursor::current_descendant_index(self : TreeCursor) -> Int32 {
   uint_to_int(self._current_descendant_index())
 }
 
 ///|
-extern "c" fn TreeCursor::_current_depth(self : TreeCursor) -> UInt = "moonbit_ts_tree_cursor_current_depth"
+extern "c" fn TreeCursor::_current_depth(self : TreeCursor) -> UInt32 = "moonbit_ts_tree_cursor_current_depth"
 
 ///|
-pub fn TreeCursor::current_depth(self : TreeCursor) -> Int {
+pub fn TreeCursor::current_depth(self : TreeCursor) -> Int32 {
   uint_to_int(self._current_depth())
 }
 
 ///|
 extern "c" fn TreeCursor::_goto_first_child_for_byte(
   self : TreeCursor,
-  goal_byte : UInt
+  goal_byte : UInt32,
 ) -> Bool = "moonbit_ts_tree_cursor_goto_first_child_for_byte"
 
 ///|
 pub fn TreeCursor::goto_first_child_for_byte(
   self : TreeCursor,
-  goal_byte : Int
+  goal_byte : Int32,
 ) -> Bool {
   self._goto_first_child_for_byte(int_to_uint(goal_byte))
 }
@@ -84,7 +86,7 @@ pub fn TreeCursor::goto_first_child_for_byte(
 ///|
 pub extern "c" fn TreeCursor::goto_first_child_for_point(
   self : TreeCursor,
-  goal_point : Point
+  goal_point : Point,
 ) -> Bool = "moonbit_ts_tree_cursor_goto_first_child_for_point"
 
 ///|

@@ -1,5 +1,6 @@
 ///|
-extern type QueryCursor
+#external
+type QueryCursor
 
 ///|
 pub extern "c" fn QueryCursor::new() -> QueryCursor = "moonbit_ts_query_cursor_new"
@@ -11,7 +12,7 @@ pub extern "c" fn QueryCursor::delete(self : QueryCursor) = "moonbit_ts_query_cu
 extern "c" fn QueryCursor::_exec(
   self : QueryCursor,
   query : Query,
-  node : Node
+  node : Node,
 ) = "moonbit_ts_query_cursor_exec"
 
 ///|
@@ -19,12 +20,12 @@ extern "c" fn QueryCursor::_exec_with_options(
   self : QueryCursor,
   query : Query,
   node : Node,
-  progress_callback : (UInt) -> Unit
+  progress_callback : (UInt32) -> Unit,
 ) = "moonbit_ts_query_cursor_exec_with_options"
 
 ///|
 pub struct QueryCursorState {
-  current_byte_offset : Int
+  current_byte_offset : Int32
 }
 
 ///|
@@ -37,13 +38,13 @@ pub fn QueryCursor::exec(
   self : QueryCursor,
   query : Query,
   node : Node,
-  options? : QueryCursorOptions
+  options? : QueryCursorOptions,
 ) -> Unit {
   match options {
     None => QueryCursor::_exec(self, query, node)
     Some(options) =>
       QueryCursor::_exec_with_options(self, query, node, fn(
-        current_byte_offset
+        current_byte_offset,
       ) {
         let current_byte_offset = uint_to_int(current_byte_offset)
         (options.progress_callback)(QueryCursorState::{ current_byte_offset, })
@@ -53,37 +54,37 @@ pub fn QueryCursor::exec(
 
 ///|
 pub extern "c" fn QueryCursor::did_exceed_match_limit(
-  self : QueryCursor
+  self : QueryCursor,
 ) -> Bool = "moonbit_ts_query_cursor_did_exceed_match_limit"
 
 ///|
-extern "c" fn QueryCursor::_match_limit(self : QueryCursor) -> UInt = "moonbit_ts_query_cursor_match_limit"
+extern "c" fn QueryCursor::_match_limit(self : QueryCursor) -> UInt32 = "moonbit_ts_query_cursor_match_limit"
 
 ///|
-pub fn QueryCursor::match_limit(self : QueryCursor) -> Int {
+pub fn QueryCursor::match_limit(self : QueryCursor) -> Int32 {
   uint_to_int(self._match_limit())
 }
 
 ///|
-extern "c" fn QueryCursor::_set_match_limit(self : QueryCursor, limit : UInt) = "moonbit_ts_query_cursor_set_match_limit"
+extern "c" fn QueryCursor::_set_match_limit(self : QueryCursor, limit : UInt32) = "moonbit_ts_query_cursor_set_match_limit"
 
 ///|
-pub fn QueryCursor::set_match_limit(self : QueryCursor, limit : Int) -> Unit {
+pub fn QueryCursor::set_match_limit(self : QueryCursor, limit : Int32) -> Unit {
   self._set_match_limit(int_to_uint(limit))
 }
 
 ///|
 extern "c" fn QueryCursor::_set_byte_range(
   self : QueryCursor,
-  start_byte : UInt,
-  end_byte : UInt
+  start_byte : UInt32,
+  end_byte : UInt32,
 ) = "moonbit_ts_query_cursor_set_byte_range"
 
 ///|
 pub fn QueryCursor::set_byte_range(
   self : QueryCursor,
-  start_byte : Int,
-  end_byte : Int
+  start_byte : Int32,
+  end_byte : Int32,
 ) -> Unit {
   let start_byte = int_to_uint(start_byte)
   let end_byte = int_to_uint(end_byte)
@@ -94,19 +95,20 @@ pub fn QueryCursor::set_byte_range(
 pub extern "c" fn QueryCursor::set_point_range(
   self : QueryCursor,
   start_point : Point,
-  end_point : Point
+  end_point : Point,
 ) = "moonbit_ts_query_cursor_set_point_range"
 
 ///|
+#derive(Show)
 pub struct QueryCapture {
   node : Node
-  index : Int
-} derive(Show)
+  index : Int32
+}
 
 ///|
 pub struct QueryMatch {
-  id : Int
-  pattern_index : Int
+  id : Int32
+  pattern_index : Int32
   captures : FixedArray[QueryCapture]
 }
 
@@ -119,10 +121,10 @@ fn init {
 }
 
 ///|
-extern "c" fn QueryMatch_::id(self : QueryMatch_) -> UInt = "moonbit_ts_query_match_id"
+extern "c" fn QueryMatch_::id(self : QueryMatch_) -> UInt32 = "moonbit_ts_query_match_id"
 
 ///|
-extern "c" fn QueryMatch_::pattern_index(self : QueryMatch_) -> UInt = "moonbit_ts_query_match_pattern_index"
+extern "c" fn QueryMatch_::pattern_index(self : QueryMatch_) -> UInt32 = "moonbit_ts_query_match_pattern_index"
 
 ///|
 extern "c" fn QueryMatch_::capture_count(self : QueryMatch_) -> UInt16 = "moonbit_ts_query_match_capture_count"
@@ -130,18 +132,18 @@ extern "c" fn QueryMatch_::capture_count(self : QueryMatch_) -> UInt16 = "moonbi
 ///|
 extern "c" fn QueryMatch_::captures_get_node(
   self : QueryMatch_,
-  index : UInt
+  index : UInt32,
 ) -> Node = "moonbit_ts_query_match_captures_get_node"
 
 ///|
 extern "c" fn QueryMatch_::captures_get_index(
   self : QueryMatch_,
-  index : UInt
-) -> UInt = "moonbit_ts_query_match_captures_get_index"
+  index : UInt32,
+) -> UInt32 = "moonbit_ts_query_match_captures_get_index"
 
 ///|
 extern "c" fn QueryCursor::_next_match(
-  self : QueryCursor
+  self : QueryCursor,
 ) -> @c.Nullable[QueryMatch_] = "moonbit_ts_query_cursor_next_match"
 
 ///|
@@ -154,25 +156,25 @@ pub fn QueryCursor::next_match(self : QueryCursor) -> QueryMatch? {
     let node = QueryMatch_::captures_get_node(match_, i)
     let index = QueryMatch_::captures_get_index(match_, i)
     let index = uint_to_int(index)
-    QueryCapture::{ node, index }
+    QueryCapture::{ node, index, }
   })
   let id = uint_to_int(QueryMatch_::id(match_))
   let pattern_index = uint_to_int(QueryMatch_::pattern_index(match_))
-  Some(QueryMatch::{ id, pattern_index, captures })
+  Some(QueryMatch::{ id, pattern_index, captures, })
 }
 
 ///|
-extern "c" fn QueryCursor::_remove_match(self : QueryCursor, match_id : UInt) = "moonbit_ts_query_cursor_remove_match"
+extern "c" fn QueryCursor::_remove_match(self : QueryCursor, match_id : UInt32) = "moonbit_ts_query_cursor_remove_match"
 
 ///|
-pub fn QueryCursor::remove_match(self : QueryCursor, match_id : Int) -> Unit {
+pub fn QueryCursor::remove_match(self : QueryCursor, match_id : Int32) -> Unit {
   self._remove_match(int_to_uint(match_id))
 }
 
 ///|
 extern "c" fn QueryCursor::_next_capture(
   self : QueryCursor,
-  match_id : FixedArray[UInt]
+  match_id : FixedArray[UInt32],
 ) -> @c.Nullable[QueryMatch_] = "moonbit_ts_query_cursor_next_capture"
 
 ///|
@@ -183,19 +185,19 @@ pub fn QueryCursor::next_capture(self : QueryCursor) -> QueryCapture? {
   let node = QueryMatch_::captures_get_node(match_, 0)
   let index = QueryMatch_::captures_get_index(match_, 0)
   let index = uint_to_int(index)
-  Some(QueryCapture::{ node, index })
+  Some(QueryCapture::{ node, index, })
 }
 
 ///|
 extern "c" fn QueryCursor::_set_max_start_depth(
   self : QueryCursor,
-  max_start_depth : UInt
+  max_start_depth : UInt32,
 ) = "moonbit_ts_query_cursor_set_max_start_depth"
 
 ///|
 pub fn QueryCursor::set_max_start_depth(
   self : QueryCursor,
-  max_start_depth : Int
+  max_start_depth : Int32,
 ) -> Unit {
   self._set_max_start_depth(int_to_uint(max_start_depth))
 }

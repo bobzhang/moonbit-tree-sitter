@@ -2,7 +2,7 @@
 type Range FixedArray[UInt]
 
 ///|
-pub impl Show for Range with output(self : Range, logger : &@builtin.Logger) -> Unit {
+pub impl Show for Range with fn output(self : Range, logger : &@builtin.Logger) -> Unit {
   logger.write_object(self.start_point())
   logger.write_string(" - ")
   logger.write_object(self.end_point())
@@ -12,8 +12,8 @@ pub impl Show for Range with output(self : Range, logger : &@builtin.Logger) -> 
 fn Range::_new(
   start_point : Point,
   end_point : Point,
-  start_byte : UInt,
-  end_byte : UInt
+  start_byte : UInt32,
+  end_byte : UInt32,
 ) -> Range {
   [
     start_point._row(),
@@ -29,8 +29,8 @@ fn Range::_new(
 pub fn Range::new(
   start_pointer : Point,
   end_pointer : Point,
-  start_byte : Int,
-  end_byte : Int
+  start_byte : Int32,
+  end_byte : Int32,
 ) -> Range {
   let start_byte = int_to_uint(start_byte)
   let end_byte = int_to_uint(end_byte)
@@ -48,21 +48,21 @@ pub fn Range::end_point(self : Range) -> Point {
 }
 
 ///|
-fn Range::_start_byte(self : Range) -> UInt {
+fn Range::_start_byte(self : Range) -> UInt32 {
   self._[4]
 }
 
 ///|
-pub fn Range::start_byte(self : Range) -> Int {
+pub fn Range::start_byte(self : Range) -> Int32 {
   uint_to_int(self._start_byte())
 }
 
 ///|
-fn Range::_end_byte(self : Range) -> UInt {
+fn Range::_end_byte(self : Range) -> UInt32 {
   self._[5]
 }
 
 ///|
-pub fn Range::end_byte(self : Range) -> Int {
+pub fn Range::end_byte(self : Range) -> Int32 {
   uint_to_int(self._end_byte())
 }

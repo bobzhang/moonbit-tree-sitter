@@ -1,9 +1,10 @@
 ///|
+#derive(ToJson, Show)
 pub struct ChildType {
   multiple : Bool
   required : Bool
   types : Array[NodeType]
-} derive(ToJson, Show)
+}
 
 ///|
 impl @json.FromJson for ChildType with from_json(
@@ -29,18 +30,20 @@ impl @json.FromJson for ChildType with from_json(
 }
 
 ///|
+#derive(Show)
 pub enum NodeTypePayload {
   Empty
   Supertype(subtypes~ : Array[NodeType])
   Normal(fields~ : Map[String, ChildType], children~ : ChildType)
-} derive(Show)
+}
 
 ///|
+#derive(Show)
 pub struct NodeType {
   type_ : String
   named : Bool
   payload : NodeTypePayload
-} derive(Show)
+}
 
 ///|
 pub impl @json.FromJson for NodeType with from_json(
@@ -89,7 +92,7 @@ pub impl @json.FromJson for NodeType with from_json(
 }
 
 ///|
-pub impl ToJson for NodeType with to_json(self : NodeType) -> Json {
+pub impl ToJson for NodeType with fn to_json(self : NodeType) -> Json {
   let type_ = self.type_.to_json()
   let named = self.named.to_json()
   match self.payload {

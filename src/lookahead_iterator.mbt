@@ -1,10 +1,11 @@
 ///|
-extern type LookaheadIterator
+#external
+type LookaheadIterator
 
 ///|
 pub extern "c" fn LookaheadIterator::new(
   language : Language,
-  state : StateId
+  state : StateId,
 ) -> LookaheadIterator = "moonbit_ts_lookahead_iterator_new"
 
 ///|
@@ -13,19 +14,19 @@ pub extern "c" fn LookaheadIterator::delete(self : LookaheadIterator) = "moonbit
 ///|
 pub extern "c" fn LookaheadIterator::reset_state(
   self : LookaheadIterator,
-  state : StateId
+  state : StateId,
 ) = "moonbit_ts_lookahead_iterator_reset_state"
 
 ///|
 pub extern "c" fn LookaheadIterator::reset(
   self : LookaheadIterator,
   language : Language,
-  state : StateId
+  state : StateId,
 ) = "moonbit_ts_lookahead_iterator_reset"
 
 ///|
 pub extern "c" fn LookaheadIterator::language(
-  self : LookaheadIterator
+  self : LookaheadIterator,
 ) -> Language = "moonbit_ts_lookahead_iterator_language"
 
 ///|
@@ -33,17 +34,17 @@ pub extern "c" fn LookaheadIterator::next(self : LookaheadIterator) -> Bool = "m
 
 ///|
 pub extern "c" fn LookaheadIterator::current_symbol(
-  self : LookaheadIterator
+  self : LookaheadIterator,
 ) -> Symbol = "moonbit_ts_lookahead_iterator_current_symbol"
 
 ///|
 extern "c" fn LookaheadIterator::_current_symbol_name(
-  self : LookaheadIterator
+  self : LookaheadIterator,
 ) -> Bytes = "moonbit_ts_lookahead_iterator_current_symbol_name"
 
 ///|
 pub fn LookaheadIterator::current_symbol_name(
-  self : LookaheadIterator
+  self : LookaheadIterator,
 ) -> String {
   let bytes = LookaheadIterator::_current_symbol_name(self)
   @encoding.decoder(UTF8).decode_lossy(bytes)

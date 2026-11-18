@@ -1,13 +1,14 @@
 ///|
+#derive(Eq, Hash)
 enum Prec {
   NonAssoc
   Left
   Right
   Dynamic
-} derive(Eq, Hash)
+}
 
 ///|
-impl Show for Prec with to_string(self) {
+impl Show for Prec with fn to_string(self) {
   match self {
     Prec::NonAssoc => "PREC"
     Prec::Left => "PREC_LEFT"
@@ -17,16 +18,17 @@ impl Show for Prec with to_string(self) {
 }
 
 ///|
-impl Show for Prec with output(self, logger) {
+impl Show for Prec with fn output(self, logger) {
   logger.write_string(self.to_string())
 }
 
 ///|
-impl ToJson for Prec with to_json(self) {
+impl ToJson for Prec with fn to_json(self) {
   String(self.to_string())
 }
 
 ///|
+#derive(Show)
 pub enum Rule {
   Alias(named~ : Bool, String, Rule)
   Blank
@@ -38,12 +40,12 @@ pub enum Rule {
   Seq(Array[Rule])
   Field(name~ : String, Rule)
   Token(immediate~ : Bool, Rule)
-  Prec(prec~ : Prec, value~ : Int, Rule)
+  Prec(prec~ : Prec, value~ : Int32, Rule)
   Pattern(String)
-} derive(Show)
+}
 
 ///|
-pub impl Eq for Rule with op_equal(self : Rule, other : Rule) -> Bool {
+pub impl Eq for Rule with fn op_equal(self : Rule, other : Rule) -> Bool {
   match (self, other) {
     (Alias(named=named1, alias1, rule1), Alias(named=named2, alias2, rule2)) =>
       named1 == named2 && alias1 == alias2 && rule1 == rule2
@@ -79,7 +81,7 @@ pub impl Eq for Rule with op_equal(self : Rule, other : Rule) -> Bool {
 }
 
 ///|
-pub impl Hash for Rule with hash_combine(self, hasher) {
+pub impl Hash for Rule with fn hash_combine(self, hasher) {
   match self {
     Alias(named~, value, rule) => {
       hasher.combine_int(0)
@@ -251,7 +253,7 @@ impl @json.FromJson for Rule with from_json(
 }
 
 ///|
-impl ToJson for Rule with to_json(self : Rule) -> Json {
+impl ToJson for Rule with fn to_json(self : Rule) -> Json {
   match self {
     Alias(named~, value, rule) =>
       {
@@ -296,25 +298,26 @@ impl ToJson for Rule with to_json(self : Rule) -> Json {
 }
 
 ///|
+#derive(Show)
 struct RuleName {
   name : String
   mut rule : Rule?
-} derive(Show)
+}
 
 ///|
-impl @json.FromJson for RuleName with from_json(
+impl @json.FromJson for RuleName with fn from_json(
   json : Json,
-  json_path : @json.JsonPath
-) -> RuleName!@json.JsonDecodeError {
+  json_path : @json.JsonPath,
+) -> RuleName raise @json.JsonDecodeError {
   guard json is String(name) else {
     let message = "RuleName::from_json: expected string, got \{json}"
     raise @json.JsonDecodeError((json_path, message))
   }
-  { name, rule: None }
+  { name, rule: None, }
 }
 
 ///|
-impl ToJson for RuleName with to_json(self : RuleName) -> Json {
+impl ToJson for RuleName with fn to_json(self : RuleName) -> Json {
   String(self.name)
 }
 

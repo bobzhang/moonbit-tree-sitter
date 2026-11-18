@@ -2,7 +2,7 @@
 type Point FixedArray[UInt]
 
 ///|
-pub impl Show for Point with output(self : Point, logger : &@builtin.Logger) -> Unit {
+pub impl Show for Point with fn output(self : Point, logger : &@builtin.Logger) -> Unit {
   logger.write_string("(")
   logger.write_string(self.row().to_string())
   logger.write_string(", ")
@@ -11,31 +11,31 @@ pub impl Show for Point with output(self : Point, logger : &@builtin.Logger) -> 
 }
 
 ///|
-fn Point::_new(row : UInt, column : UInt) -> Point {
+fn Point::_new(row : UInt32, column : UInt32) -> Point {
   [row, column]
 }
 
 ///|
-pub fn Point::new(row : Int, column : Int) -> Point {
+pub fn Point::new(row : Int32, column : Int32) -> Point {
   Point::_new(int_to_uint(row), int_to_uint(column))
 }
 
 ///|
-fn Point::_row(self : Point) -> UInt {
+fn Point::_row(self : Point) -> UInt32 {
   self._[0]
 }
 
 ///|
-pub fn Point::row(self : Point) -> Int {
+pub fn Point::row(self : Point) -> Int32 {
   uint_to_int(self._row())
 }
 
 ///|
-fn Point::_column(self : Point) -> UInt {
+fn Point::_column(self : Point) -> UInt32 {
   self._[1]
 }
 
 ///|
-pub fn Point::column(self : Point) -> Int {
+pub fn Point::column(self : Point) -> Int32 {
   uint_to_int(self._column())
 }
