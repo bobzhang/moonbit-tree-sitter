@@ -20,6 +20,4 @@ description = "A MoonBit binding to the tree-sitter parsing library"
 
 source = "src"
 
-options(
-  "bin-deps": { "moonbitlang/yacc": "0.2.11", "moonbitlang/lex": "0.3.2" },
-)
+preferred_target = "native"

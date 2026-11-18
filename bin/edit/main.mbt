@@ -1,9 +1,10 @@
 ///|
+#derive(Show)
 struct Edit {
   name : String
   search : String
   replace : String
-} derive(Show)
+}
 
 ///|
 fn parse_rules(source : Bytes) -> Array[Edit]! {
@@ -189,7 +190,7 @@ fn handle_predicates(
 ///|
 fn fill_captures(
   replacement : String,
-  captures_texts : Map[String, String]
+  captures_texts : Map[String, String],
 ) -> String {
   let buffer = StringBuilder::new()
   replace~: loop replacement[:] {
@@ -238,11 +239,12 @@ fn fill_captures(
 }
 
 ///|
+#derive(Show)
 struct Match {
   node : @tree_sitter.Node
   captures : Map[String, String]
   predicates : Array[Array[@tree_sitter.QueryPredicateStep]]
-} derive(Show)
+}
 
 ///|
 fn merge_captures(
@@ -389,17 +391,17 @@ struct MoonModJson {
 }
 
 ///|
-impl @json.FromJson for MoonModJson with from_json(
+impl @json.FromJson for MoonModJson with fn from_json(
   json : Json,
-  path : @json.JsonPath
-) -> MoonModJson!@json.JsonDecodeError {
+  path : @json.JsonPath,
+) -> MoonModJson raise @json.JsonDecodeError {
   match json {
     { "target": String(target), .. } => MoonModJson::{ target, }
     { "target": target, .. } =>
       raise @json.JsonDecodeError(
         (path, "expected target to be a string, got \{target}"),
       )
-    _ => MoonModJson::{ target: "target" }
+    _ => MoonModJson::{ target: "target", }
   }
 }
 
@@ -470,11 +472,12 @@ fn apply_dir(
 }
 
 ///|
+#derive(Show)
 struct Arguments {
   ruleset_path : String
   source_path : String
   apply : Bool
-} derive(Show)
+}
 
 ///|
 fn Arguments::parse(args : Array[String]) -> Arguments {
