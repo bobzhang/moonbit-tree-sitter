@@ -1,5 +1,5 @@
 ///|
-pub fn print(list : Array[Sexp], logger : &Logger, indent~ : Int = 0) -> Unit {
+pub fn print(list : Array[Sexp], logger : &Logger, indent~ : Int32 = 0) -> Unit {
   for i, sexp in list {
     sexp.print(logger, indent~)
     if i < list.length() - 1 {
@@ -12,7 +12,7 @@ pub fn print(list : Array[Sexp], logger : &Logger, indent~ : Int = 0) -> Unit {
 }
 
 ///|
-pub fn Sexp::print(self : Sexp, logger : &Logger, indent~ : Int = 0) -> Unit {
+pub fn Sexp::print(self : Sexp, logger : &Logger, indent~ : Int32 = 0) -> Unit {
   match self {
     Atom(atom) => logger.write_object(atom)
     Pair(key, value) => {

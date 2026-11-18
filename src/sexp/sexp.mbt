@@ -1,11 +1,12 @@
 ///|
+#derive(Eq)
 pub enum Atom {
   Symbol(String)
   String(String)
-} derive(Eq)
+}
 
 ///|
-pub impl ToJson for Atom with to_json(self : Atom) -> Json {
+pub impl ToJson for Atom with fn to_json(self : Atom) -> Json {
   match self {
     Symbol(symbol) => symbol.to_json()
     String(string) => string.escape().to_json()
@@ -13,7 +14,7 @@ pub impl ToJson for Atom with to_json(self : Atom) -> Json {
 }
 
 ///|
-pub impl Show for Atom with output(self : Atom, logger : &Logger) -> Unit {
+pub impl Show for Atom with fn output(self : Atom, logger : &Logger) -> Unit {
   match self {
     Symbol(symbol) => logger.write_string(symbol)
     String(string) => logger.write_string(string.escape())
@@ -21,14 +22,15 @@ pub impl Show for Atom with output(self : Atom, logger : &Logger) -> Unit {
 }
 
 ///|
+#derive(Eq, Show)
 pub enum Sexp {
   Atom(Atom)
   Pair(String, Sexp)
   List(Array[Sexp])
-} derive(Eq, Show)
+}
 
 ///|
-pub impl ToJson for Sexp with to_json(self : Sexp) -> Json {
+pub impl ToJson for Sexp with fn to_json(self : Sexp) -> Json {
   match self {
     Atom(atom) => atom.to_json()
     Pair(key, value) => {

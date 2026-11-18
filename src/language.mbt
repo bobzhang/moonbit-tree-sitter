@@ -8,18 +8,18 @@ pub extern "c" fn Language::copy(self : Language) -> Language = "moonbit_ts_lang
 pub extern "c" fn Language::delete(self : Language) -> Unit = "moonbit_ts_language_delete"
 
 ///|
-extern "c" fn Language::_symbol_count(self : Language) -> UInt = "moonbit_ts_language_symbol_count"
+extern "c" fn Language::_symbol_count(self : Language) -> UInt32 = "moonbit_ts_language_symbol_count"
 
 ///|
-pub fn Language::symbol_count(self : Language) -> Int {
+pub fn Language::symbol_count(self : Language) -> Int32 {
   uint_to_int(self._symbol_count())
 }
 
 ///|
-extern "c" fn Language::_state_count(self : Language) -> UInt = "moonbit_ts_language_state_count"
+extern "c" fn Language::_state_count(self : Language) -> UInt32 = "moonbit_ts_language_state_count"
 
 ///|
-pub fn Language::state_count(self : Language) -> Int {
+pub fn Language::state_count(self : Language) -> Int32 {
   uint_to_int(self._state_count())
 }
 
@@ -29,7 +29,7 @@ type Symbol UInt16
 ///|
 extern "c" fn Language::symbol_for_name_(
   self : Language,
-  name : Bytes
+  name : Bytes,
 ) -> Symbol = "moonbit_ts_language_symbol_for_name"
 
 ///|
@@ -42,22 +42,22 @@ pub fn Language::symbol_for_name(self : Language, name : String) -> Symbol {
 type FieldId UInt16
 
 ///|
-extern "c" fn Language::field_count(self : Language) -> Int = "moonbit_ts_language_field_count"
+extern "c" fn Language::field_count(self : Language) -> Int32 = "moonbit_ts_language_field_count"
 
 ///|
 extern "c" fn Language::field_name_for_id(
   self : Language,
-  id : FieldId
+  id : FieldId,
 ) -> Bytes = "moonbit_ts_language_field_name_for_id"
 
 ///|
 extern "c" fn Language::_field_id_for_name(
   self : Language,
-  name : Bytes
-) -> UInt = "moonbit_ts_language_field_id_for_name"
+  name : Bytes,
+) -> UInt32 = "moonbit_ts_language_field_id_for_name"
 
 ///|
-pub fn Language::field_id_for_name(self : Language, name : String) -> Int {
+pub fn Language::field_id_for_name(self : Language, name : String) -> Int32 {
   let name_bytes = @encoding.encode(UTF8, name)
   Language::_field_id_for_name(self, name_bytes) |> uint_to_int()
 }
@@ -86,7 +86,7 @@ enum SymbolType {
 }
 
 ///|
-fn SymbolType::of_int(value : UInt) -> SymbolType {
+fn SymbolType::of_int(value : UInt32) -> SymbolType {
   match value {
     0 => SymbolType::Regular
     1 => SymbolType::Anonymous
@@ -97,7 +97,7 @@ fn SymbolType::of_int(value : UInt) -> SymbolType {
 }
 
 ///|
-fn SymbolType::to_int(self : SymbolType) -> UInt {
+fn SymbolType::to_int(self : SymbolType) -> UInt32 {
   match self {
     SymbolType::Regular => 0
     SymbolType::Anonymous => 1
@@ -107,7 +107,10 @@ fn SymbolType::to_int(self : SymbolType) -> UInt {
 }
 
 ///|
-extern "c" fn Language::symbol_type_(self : Language, symbol : Symbol) -> UInt = "moonbit_ts_language_symbol_type"
+extern "c" fn Language::symbol_type_(
+  self : Language,
+  symbol : Symbol,
+) -> UInt32 = "moonbit_ts_language_symbol_type"
 
 ///|
 pub fn Language::symbol_type(self : Language, symbol : Symbol) -> SymbolType {
@@ -115,18 +118,18 @@ pub fn Language::symbol_type(self : Language, symbol : Symbol) -> SymbolType {
 }
 
 ///|
-extern "c" fn Language::_version(self : Language) -> UInt = "moonbit_ts_language_version"
+extern "c" fn Language::_version(self : Language) -> UInt32 = "moonbit_ts_language_version"
 
 ///|
-pub fn Language::version(self : Language) -> Int {
+pub fn Language::version(self : Language) -> Int32 {
   uint_to_int(self._version())
 }
 
 ///|
-extern "c" fn Language::_abi_version(self : Language) -> UInt = "moonbit_ts_language_abi_version"
+extern "c" fn Language::_abi_version(self : Language) -> UInt32 = "moonbit_ts_language_abi_version"
 
 ///|
-pub fn Language::abi_version(self : Language) -> Int {
+pub fn Language::abi_version(self : Language) -> Int32 {
   uint_to_int(self._abi_version())
 }
 
@@ -164,7 +167,7 @@ type StateId UInt16
 extern "c" fn Language::next_state(
   self : Language,
   state : StateId,
-  symbol : Symbol
+  symbol : Symbol,
 ) -> StateId = "moonbit_ts_language_next_state"
 
 ///|

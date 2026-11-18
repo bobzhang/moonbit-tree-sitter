@@ -1,0 +1,20 @@
+import {
+  "moonbitlang/x/encoding",
+  "tonyfettes/c",
+  "tonyfettes/tree_sitter/grammar",
+  "tonyfettes/tree_sitter/node_types",
+  "tonyfettes/tree_sitter_language",
+}
+
+supported_targets = [ "native" ]
+
+options(
+  "pre-build": [
+    {
+      "input": [ "tree-sitter.c" ],
+      "output": [ "tree-sitter-lib.c" ],
+      "command": "python3 src/preprocess.py",
+    },
+  ],
+  "native-stub": [ "tree-sitter-lib.c" ],
+)

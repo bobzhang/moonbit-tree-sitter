@@ -1,6 +1,6 @@
 ///|
 struct Input[DecodeFunction] {
-  read : (UInt, Point) -> Bytes
+  read : (UInt32, Point) -> Bytes
   decode : DecodeFunction
 }
 
@@ -23,12 +23,12 @@ type InputEdit FixedArray[UInt]
 
 ///|
 fn InputEdit::_new(
-  start_byte : UInt,
-  old_end_byte : UInt,
-  new_end_byte : UInt,
+  start_byte : UInt32,
+  old_end_byte : UInt32,
+  new_end_byte : UInt32,
   start_point : Point,
   old_end_point : Point,
-  new_end_point : Point
+  new_end_point : Point,
 ) -> InputEdit {
   [
     start_byte,
@@ -45,12 +45,12 @@ fn InputEdit::_new(
 
 ///|
 pub fn InputEdit::new(
-  start_byte~ : Int,
-  old_end_byte~ : Int,
-  new_end_byte~ : Int,
+  start_byte~ : Int32,
+  old_end_byte~ : Int32,
+  new_end_byte~ : Int32,
   start_point~ : Point,
   old_end_point~ : Point,
-  new_end_point~ : Point
+  new_end_point~ : Point,
 ) -> InputEdit {
   let start_byte = int_to_uint(start_byte)
   let old_end_byte = int_to_uint(old_end_byte)
@@ -62,8 +62,8 @@ pub fn InputEdit::new(
 
 ///|
 pub(all) struct DecodeResult {
-  code_point : Int
-  bytes_read : Int
+  code_point : Int32
+  bytes_read : Int32
 }
 
 ///|
@@ -71,12 +71,12 @@ pub(all) struct DecodeResult {
 /// returning the number of bytes consumed and the code point
 /// to the `code_point` pointer. If the input is valid, return `None`.
 pub(open) trait DecodeFunction {
-  input_encoding(Self) -> InputEncoding
-  decode(Bytes) -> DecodeResult?
+  fn input_encoding(Self) -> InputEncoding
+  fn decode(Bytes) -> DecodeResult?
 }
 
 ///|
-impl DecodeFunction with input_encoding(self) -> InputEncoding {
+impl DecodeFunction with fn input_encoding(self) -> InputEncoding {
   ignore(self)
   Custom
 }
@@ -90,18 +90,18 @@ pub(all) enum InputEncoding {
 }
 
 ///|
-impl DecodeFunction for InputEncoding with input_encoding(self) -> InputEncoding {
+impl DecodeFunction for InputEncoding with fn input_encoding(self) -> InputEncoding {
   self
 }
 
 ///|
-impl DecodeFunction for InputEncoding with decode(bytes) -> DecodeResult? {
+impl DecodeFunction for InputEncoding with fn decode(bytes) -> DecodeResult? {
   ignore(bytes)
   None
 }
 
 ///|
-fn InputEncoding::to_uint(self : InputEncoding) -> UInt {
+fn InputEncoding::to_uint(self : InputEncoding) -> UInt32 {
   match self {
     UTF8 => 0
     UTF16LE => 1

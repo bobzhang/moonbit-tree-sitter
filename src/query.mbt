@@ -1,5 +1,6 @@
 ///|
-extern type Query
+#external
+type Query
 
 ///|
 type! QueryError {
@@ -12,7 +13,7 @@ type! QueryError {
 } derive(Show)
 
 ///|
-fn QueryError::offset(self : QueryError) -> UInt {
+fn QueryError::offset(self : QueryError) -> UInt32 {
   match self {
     QueryError::Syntax(offset) => offset
     QueryError::NodeType(offset) => offset
@@ -24,7 +25,7 @@ fn QueryError::offset(self : QueryError) -> UInt {
 }
 
 ///|
-fn QueryError::from(offset : UInt, type_ : UInt) -> QueryError {
+fn QueryError::from(offset : UInt32, type_ : UInt32) -> QueryError {
   match type_ {
     1 => QueryError::Syntax(offset)
     2 => QueryError::NodeType(offset)
@@ -40,11 +41,14 @@ fn QueryError::from(offset : UInt, type_ : UInt) -> QueryError {
 extern "c" fn Query::_new(
   language : Language,
   source : Bytes,
-  error : FixedArray[UInt]
+  error : FixedArray[UInt32],
 ) -> Query = "moonbit_ts_query_new"
 
 ///|
-pub fn Query::new(language : Language, source : String) -> Query!QueryError {
+pub fn Query::new(
+  language : Language,
+  source : String,
+) -> Query raise QueryError {
   let error = FixedArray::make(2, 0U)
   let source = @encoding.encode(UTF8, source)
   let query = Query::_new(language, source, error)
@@ -59,37 +63,40 @@ pub fn Query::new(language : Language, source : String) -> Query!QueryError {
 pub extern "c" fn Query::delete(self : Query) = "moonbit_ts_query_delete"
 
 ///|
-extern "c" fn Query::_pattern_count(self : Query) -> UInt = "moonbit_ts_query_pattern_count"
+extern "c" fn Query::_pattern_count(self : Query) -> UInt32 = "moonbit_ts_query_pattern_count"
 
 ///|
-pub fn Query::pattern_count(self : Query) -> Int {
+pub fn Query::pattern_count(self : Query) -> Int32 {
   uint_to_int(self._pattern_count())
 }
 
 ///|
-extern "c" fn Query::_capture_count(self : Query) -> UInt = "moonbit_ts_query_capture_count"
+extern "c" fn Query::_capture_count(self : Query) -> UInt32 = "moonbit_ts_query_capture_count"
 
 ///|
-pub fn Query::capture_count(self : Query) -> Int {
+pub fn Query::capture_count(self : Query) -> Int32 {
   uint_to_int(self._capture_count())
 }
 
 ///|
-extern "c" fn Query::_string_count(self : Query) -> UInt = "moonbit_ts_query_string_count"
+extern "c" fn Query::_string_count(self : Query) -> UInt32 = "moonbit_ts_query_string_count"
 
 ///|
-pub fn Query::string_count(self : Query) -> Int {
+pub fn Query::string_count(self : Query) -> Int32 {
   uint_to_int(self._string_count())
 }
 
 ///|
 extern "c" fn Query::_start_byte_for_pattern(
   self : Query,
-  pattern_index : UInt
-) -> UInt = "moonbit_ts_query_start_byte_for_pattern"
+  pattern_index : UInt32,
+) -> UInt32 = "moonbit_ts_query_start_byte_for_pattern"
 
 ///|
-pub fn Query::start_byte_for_pattern(self : Query, pattern_index : Int) -> Int {
+pub fn Query::start_byte_for_pattern(
+  self : Query,
+  pattern_index : Int32,
+) -> Int32 {
   let pattern_index = int_to_uint(pattern_index)
   self._start_byte_for_pattern(pattern_index) |> uint_to_int()
 }
@@ -97,11 +104,14 @@ pub fn Query::start_byte_for_pattern(self : Query, pattern_index : Int) -> Int {
 ///|
 extern "c" fn Query::_end_byte_for_pattern(
   self : Query,
-  pattern_index : UInt
-) -> UInt = "moonbit_ts_query_end_byte_for_pattern"
+  pattern_index : UInt32,
+) -> UInt32 = "moonbit_ts_query_end_byte_for_pattern"
 
 ///|
-pub fn Query::end_byte_for_pattern(self : Query, pattern_index : Int) -> Int {
+pub fn Query::end_byte_for_pattern(
+  self : Query,
+  pattern_index : Int32,
+) -> Int32 {
   let pattern_index = int_to_uint(pattern_index)
   self._end_byte_for_pattern(pattern_index) |> uint_to_int()
 }
@@ -109,18 +119,19 @@ pub fn Query::end_byte_for_pattern(self : Query, pattern_index : Int) -> Int {
 ///|
 extern "c" fn Query::_predicates_for_pattern(
   self : Query,
-  pattern_index : UInt
-) -> FixedArray[UInt] = "moonbit_ts_query_predicates_for_pattern"
+  pattern_index : UInt32,
+) -> FixedArray[UInt32] = "moonbit_ts_query_predicates_for_pattern"
 
 ///|
+#derive(Show)
 priv enum QueryPredicateStepType {
   Done
   Capture
   String
-} derive(Show)
+}
 
 ///|
-fn QueryPredicateStepType::of_uint(value : UInt) -> QueryPredicateStepType {
+fn QueryPredicateStepType::of_uint(value : UInt32) -> QueryPredicateStepType {
   match value {
     0 => QueryPredicateStepType::Done
     1 => QueryPredicateStepType::Capture
@@ -130,10 +141,11 @@ fn QueryPredicateStepType::of_uint(value : UInt) -> QueryPredicateStepType {
 }
 
 ///|
+#derive(Show)
 pub enum QueryPredicateStep {
   Capture(String)
   String(String)
-} derive(Show)
+}
 
 ///|
 pub typealias QueryPredicate = Array[QueryPredicateStep]
@@ -141,7 +153,7 @@ pub typealias QueryPredicate = Array[QueryPredicateStep]
 ///|
 pub fn Query::predicates_for_pattern(
   self : Query,
-  pattern_index : Int
+  pattern_index : Int32,
 ) -> Array[QueryPredicate] {
   let pattern_index = int_to_uint(pattern_index)
   let flatten_predicates = Query::_predicates_for_pattern(self, pattern_index)
@@ -172,35 +184,35 @@ pub fn Query::predicates_for_pattern(
 ///|
 extern "c" fn Query::_is_pattern_rooted(
   self : Query,
-  pattern_index : UInt
+  pattern_index : UInt32,
 ) -> Bool = "moonbit_ts_query_is_pattern_rooted"
 
 ///|
-pub fn Query::is_pattern_rooted(self : Query, pattern_index : Int) -> Bool {
+pub fn Query::is_pattern_rooted(self : Query, pattern_index : Int32) -> Bool {
   self._is_pattern_rooted(int_to_uint(pattern_index))
 }
 
 ///|
 extern "c" fn Query::_is_pattern_non_local(
   self : Query,
-  pattern_index : UInt
+  pattern_index : UInt32,
 ) -> Bool = "moonbit_ts_query_is_pattern_non_local"
 
 ///|
-pub fn Query::is_pattern_non_local(self : Query, pattern_index : Int) -> Bool {
+pub fn Query::is_pattern_non_local(self : Query, pattern_index : Int32) -> Bool {
   self._is_pattern_non_local(int_to_uint(pattern_index))
 }
 
 ///|
 extern "c" fn Query::_is_pattern_guaranteed_at_step(
   self : Query,
-  byte_offset : UInt
+  byte_offset : UInt32,
 ) -> Bool = "moonbit_ts_query_is_pattern_guaranteed_at_step"
 
 ///|
 pub fn Query::is_pattern_guaranteed_at_step(
   self : Query,
-  byte_offset : Int
+  byte_offset : Int32,
 ) -> Bool {
   self._is_pattern_guaranteed_at_step(int_to_uint(byte_offset))
 }
@@ -208,27 +220,28 @@ pub fn Query::is_pattern_guaranteed_at_step(
 ///|
 extern "c" fn Query::_capture_name_for_id(
   self : Query,
-  capture_id : UInt
+  capture_id : UInt32,
 ) -> Bytes = "moonbit_ts_query_capture_name_for_id"
 
 ///|
-pub fn Query::capture_name_for_id(self : Query, capture_id : Int) -> String {
+pub fn Query::capture_name_for_id(self : Query, capture_id : Int32) -> String {
   let capture_id = int_to_uint(capture_id)
   let name = Query::_capture_name_for_id(self, capture_id)
   @encoding.decoder(UTF8).decode_lossy(name)
 }
 
 ///|
+#derive(Show)
 pub enum Quantifier {
   Zero
   ZeroOrOne
   ZeroOrMore
   One
   OneOrMore
-} derive(Show)
+}
 
 ///|
-fn Quantifier::of_uint(value : UInt) -> Quantifier {
+fn Quantifier::of_uint(value : UInt32) -> Quantifier {
   match value {
     0 => Quantifier::Zero
     1 => Quantifier::ZeroOrOne
@@ -242,15 +255,15 @@ fn Quantifier::of_uint(value : UInt) -> Quantifier {
 ///|
 extern "c" fn Query::_capture_quantifier_for_id(
   self : Query,
-  pattern_index : UInt,
-  capture_index : UInt
-) -> UInt = "moonbit_ts_query_capture_quantifier_for_id"
+  pattern_index : UInt32,
+  capture_index : UInt32,
+) -> UInt32 = "moonbit_ts_query_capture_quantifier_for_id"
 
 ///|
 pub fn Query::capture_quantifier_for_id(
   self : Query,
-  pattern_index : Int,
-  capture_index : Int
+  pattern_index : Int32,
+  capture_index : Int32,
 ) -> Quantifier {
   let pattern_index = int_to_uint(pattern_index)
   let capture_index = int_to_uint(capture_index)
@@ -262,11 +275,11 @@ pub fn Query::capture_quantifier_for_id(
 ///|
 extern "c" fn Query::_string_value_for_id(
   self : Query,
-  string_id : UInt
+  string_id : UInt32,
 ) -> Bytes = "moonbit_ts_query_string_value_for_id"
 
 ///|
-pub fn Query::string_value_for_id(self : Query, string_id : Int) -> String {
+pub fn Query::string_value_for_id(self : Query, string_id : Int32) -> String {
   let string_id = int_to_uint(string_id)
   let value = Query::_string_value_for_id(self, string_id)
   @encoding.decoder(UTF8).decode_lossy(value)
@@ -282,9 +295,9 @@ pub fn Query::disable_capture(self : Query, name : String) -> Unit {
 }
 
 ///|
-extern "c" fn Query::_disable_pattern(self : Query, pattern_index : UInt) = "moonbit_ts_query_disable_pattern"
+extern "c" fn Query::_disable_pattern(self : Query, pattern_index : UInt32) = "moonbit_ts_query_disable_pattern"
 
 ///|
-pub fn Query::disable_pattern(self : Query, pattern_index : Int) -> Unit {
+pub fn Query::disable_pattern(self : Query, pattern_index : Int32) -> Unit {
   self._disable_pattern(int_to_uint(pattern_index))
 }
