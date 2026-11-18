@@ -2,7 +2,7 @@
 type Range (Int, Int) derive(Eq, Hash, ToJson)
 
 ///|
-impl Show for Range with output(self : Range, logger : &Logger) -> Unit {
+impl Show for Range with fn output(self : Range, logger : &Logger) -> Unit {
   logger.write_object(self._)
 }
 
@@ -16,7 +16,7 @@ struct Environment {
 fn Environment::add_var(
   self : Environment,
   name : String,
-  range : Range
+  range : Range,
 ) -> Unit {
   self.ranges[range] = name
   match self.vars.get(name) {

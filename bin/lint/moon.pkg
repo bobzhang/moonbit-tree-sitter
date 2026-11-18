@@ -1,0 +1,12 @@
+import {
+  "moonbitlang/x/sys",
+  "moonbitlang/x/fs",
+  "tonyfettes/tree_sitter",
+  "tonyfettes/tree_sitter_moonbit",
+}
+
+pkgtype(kind: "executable")
+
+options(
+  link: { "native": { "cc": "clang", "cc-flags": "-g -fsanitize=address" } },
+)

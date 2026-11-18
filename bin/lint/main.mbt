@@ -21,8 +21,8 @@ type! PatternError {
 struct Pattern {
   source : String
   capture : Array[String]
-  vars : Map[String, Array[(Int, Int)]]
-  ranges : Map[(Int, Int), String]
+  vars : Map[String, Array[(Int32, Int32)]]
+  ranges : Map[(Int32, Int32), String]
 }
 
 ///|
@@ -211,7 +211,7 @@ pub fn Pattern::parse(
 fn node_equal(
   source : String,
   node : @tree_sitter.Node,
-  other : @tree_sitter.Node
+  other : @tree_sitter.Node,
 ) -> Bool {
   if node.type_() != other.type_() {
     return false

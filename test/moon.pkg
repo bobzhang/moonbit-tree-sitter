@@ -1,0 +1,13 @@
+import {
+  "tonyfettes/tree_sitter",
+  "tonyfettes/tree_sitter_moonbit",
+  "tonyfettes/tree_sitter_markdown",
+  "tonyfettes/tree_sitter_json",
+  "tonyfettes/tree_sitter_yaml",
+  "moonbitlang/x/encoding",
+  "moonbitlang/x/sys",
+} for "test"
+
+options(
+  link: { "native": { "cc-flags": "-g" } },
+)

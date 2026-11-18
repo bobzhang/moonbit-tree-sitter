@@ -1,9 +1,10 @@
 ///|
+#derive(Show, ToJson)
 struct Edit {
   name : String
   search : String
   replace : String
-} derive(Show, ToJson)
+}
 
 ///|
 fn parse_rules(source : Bytes) -> Array[Edit]! {
